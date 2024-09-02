@@ -18,7 +18,6 @@ public class Player : MonoBehaviour
         flipx = GFX.localScale.x;
     }
 
-    // TOOD: 長押しに対応
     public void Move(string direction)
     {
         bool isHorizontal = direction == "left" || direction == "right";
