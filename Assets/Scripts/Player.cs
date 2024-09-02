@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 
@@ -18,47 +18,40 @@ public class Player : MonoBehaviour
         flipx = GFX.localScale.x;
     }
 
-    void Update()
+    // TOOD: 長押しに対応
+    public void Move(string direction)
     {
-        Move();
-    }
+        bool isHorizontal = direction == "left" || direction == "right";
+        bool isVertical = direction == "up" || direction == "down";
+        int directionNum = GetDirection(direction);
 
-    void Move()
-    {
-        // キー入力で方向転換
-        float horizontal = Math.Sign(Input.GetAxisRaw("Horizontal")); // InputManagerの設定の名前
-        float vertical = Math.Sign(Input.GetAxisRaw("Vertical")); // InputManagerの設定の名前
-
-        if (Mathf.Abs(horizontal) > 0 || Mathf.Abs(vertical) > 0) // キー入力時のみ
+        // キャラの向き
+        if (isHorizontal)
         {
-            // キャラの向き
-            if (Mathf.Abs(horizontal) > 0)
+            GFX.localScale = new Vector2(flipx * directionNum, GFX.localScale.y);
+        }
+
+        // キャラの進行
+        if (!isMoving)
+        {
+            // 進行先の設定 (1マス先)
+            if (isHorizontal)
             {
-                GFX.localScale = new Vector2(flipx * horizontal, GFX.localScale.y);
+                targetPos = new Vector2(transform.position.x + directionNum, transform.position.y);
+            }
+            else if (isVertical)
+            {
+                targetPos = new Vector2(transform.position.x, transform.position.y + directionNum);
             }
 
-            // キャラの進行
-            if (!isMoving)
+            // check for collisions
+            Vector2 hitSize = Vector2.one * 0.8f;
+            Collider2D hit = Physics2D.OverlapBox(targetPos, hitSize, 0, obstacleMask);
+
+            // 進行
+            if (!hit)
             {
-                // 進行先の設定 (1マス先)
-                if (Mathf.Abs(horizontal) > 0)
-                {
-                    targetPos = new Vector2(transform.position.x + horizontal, transform.position.y);
-                }
-                else if (Mathf.Abs(vertical) > 0)
-                {
-                    targetPos = new Vector2(transform.position.x, transform.position.y + vertical);
-                }
-
-                // check for collisions
-                Vector2 hitSize = Vector2.one * 0.8f;
-                Collider2D hit = Physics2D.OverlapBox(targetPos, hitSize, 0, obstacleMask);
-
-                // 進行
-                if (!hit)
-                {
-                    StartCoroutine(SmoothMove());
-                }
+                StartCoroutine(SmoothMove());
             }
         }
     }
@@ -73,5 +66,17 @@ public class Player : MonoBehaviour
         }
         transform.position = targetPos;
         isMoving = false;
+    }
+
+    int GetDirection(string direction)
+    {
+        Dictionary<string, int> directions = new Dictionary<string, int>
+        {
+            {"up", 1},
+            {"right", 1},
+            {"down", -1},
+            {"left", -1},
+        };
+        return directions[direction];
     }
 }
