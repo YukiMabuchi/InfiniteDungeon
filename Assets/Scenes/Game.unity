@@ -162,7 +162,7 @@ MonoBehaviour:
   - {fileID: 3439748904126508851, guid: 983d6549913e14c1dbbc1daf53e593a8, type: 3}
   - {fileID: 5843895985886124414, guid: 68360e8e4f8e7403b93b6f2186e2f2fe, type: 3}
   - {fileID: 3408234139849399945, guid: f73c65afb546245378e96f38221144e2, type: 3}
-  totalFloorCount: 50
+  totalFloorCount: 300
   itemSpawnPercent: 0
   enemySpawnPercent: 8
   windingHallPercent: 20
