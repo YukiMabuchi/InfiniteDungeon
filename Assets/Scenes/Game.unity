@@ -157,10 +157,14 @@ MonoBehaviour:
   tilePrefab: {fileID: 4431215911412843834, guid: e25c85470433b4a13b71480cd95c8c6d, type: 3}
   exitPrefab: {fileID: 7473237120023847160, guid: f6eda7418a5764d01abcf7c85fa43d7f, type: 3}
   randomItems: []
-  randomEnemies: []
-  totalFloorCount: 500
+  randomEnemies:
+  - {fileID: 6411082252380362295, guid: 75cdb58069e4f4819ad2f200012fe454, type: 3}
+  - {fileID: 3439748904126508851, guid: 983d6549913e14c1dbbc1daf53e593a8, type: 3}
+  - {fileID: 5843895985886124414, guid: 68360e8e4f8e7403b93b6f2186e2f2fe, type: 3}
+  - {fileID: 3408234139849399945, guid: f73c65afb546245378e96f38221144e2, type: 3}
+  totalFloorCount: 300
   itemSpawnPercent: 0
-  enemySpawnPercent: 0
+  enemySpawnPercent: 8
   windingHallPercent: 20
   dungeonType: 2
   minX: 0
@@ -253,6 +257,10 @@ PrefabInstance:
     - target: {fileID: 8041047976311623321, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8041047976311623321, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8931500728080773287, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
       propertyPath: orthographic size
