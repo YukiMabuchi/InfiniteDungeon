@@ -6,10 +6,10 @@ public class Enemy : MonoBehaviour
 {
 
     [SerializeField] int health = 10;
+    [SerializeField] int power = 4;
     [SerializeField] float alertRange;
     [SerializeField] Vector2 patrolInterval;
     [SerializeField] float chaseSpeed;
-    [SerializeField] Vector2 damageRange;
     [Tooltip("1マスは1.1fが安全")]
     [SerializeField] float attackRange = 1.1f;
     [Tooltip("1マスは1.1fが安全")]
@@ -17,16 +17,16 @@ public class Enemy : MonoBehaviour
 
     Player player;
     Vector2 curPos;
-    LayerMask playerMask, obstacleMask, unwalkableMask;
+    LayerMask obstacleMask, unwalkableMask;
     List<Vector2> availableMovementList = new List<Vector2>();
     List<Node> nodesList = new List<Node>();
     bool isMoving;
     int currentHealth = 0;
+    int attackPercentage = 70;
 
     void Start()
     {
         player = FindObjectOfType<Player>();
-        playerMask = LayerMask.GetMask("Player");
         obstacleMask = LayerMask.GetMask("Wall", "Enemy", "Player");
         unwalkableMask = LayerMask.GetMask("Wall", "Enemy");
         curPos = transform.position;
@@ -173,14 +173,13 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // TODO 攻撃
-    void Attack()
+    public void Attack()
     {
         int roll = Random.Range(0, 100);
-        if (roll > 50)
+        if (attackPercentage <= roll)
         {
-            float damageAmount = Mathf.Ceil(Random.Range(damageRange.x, damageRange.y));
-            Debug.Log(name + " attacked and hit for " + damageAmount + " points of damage");
+            Debug.Log(name + " attacked and hit for " + power + " points of damage");
+            player.TakeDamage(power);
         }
         else
         {

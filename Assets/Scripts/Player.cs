@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] int power;
+    [SerializeField] int health = 12;
+    [SerializeField] int power = 4;
+    // [SerializeField] int stamina; // TODO
     [SerializeField] float speed;
     LayerMask obstacleMask;
     Vector2 targetPos;
     Transform GFX;
 
-    int currentPower;
+    int currentHealth = 0;
+    int currentPower = 0;
     float flipx;
     bool isMoving;
 
@@ -18,6 +21,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        currentHealth = health;
         currentPower = power;
         obstacleMask = LayerMask.GetMask("Wall", "Enemy");
         GFX = GetComponentInChildren<SpriteRenderer>().transform;
@@ -84,5 +88,17 @@ public class Player : MonoBehaviour
             {"left", -1},
         };
         return directions[direction];
+    }
+
+    // 攻撃
+
+    // ダメージ
+    public void TakeDamage(int damageToTake)
+    {
+        currentHealth -= damageToTake;
+        if (currentHealth <= 0)
+        {
+            // TODO: gameover popup
+        }
     }
 }
