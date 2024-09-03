@@ -96,9 +96,6 @@ public class Player : MonoBehaviour
     public void TakeDamage(int damageToTake)
     {
         currentHealth -= damageToTake;
-        if (currentHealth <= 0)
-        {
-            // TODO: gameover popup
-        }
+        if (currentHealth <= 0) GameManager.instance.ShowGameOverPopup();
     }
 }
