@@ -222,6 +222,7 @@ public class DungeonManager : MonoBehaviour
 
     void RandomEnemies(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)
     {
+        // TODO: 開始時Playerとスポーン地点が被ることがある
         if (!hitTop && !hitRight && !hitBottom && !hitLeft)
         {
             int roll = Random.Range(1, 101);
