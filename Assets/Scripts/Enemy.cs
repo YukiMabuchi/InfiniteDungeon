@@ -10,6 +10,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] Vector2 patrolInterval;
     [SerializeField] float chaseSpeed;
     [SerializeField] Vector2 damageRange;
+    [Tooltip("1マスは1.1fが安全")]
+    [SerializeField] float attackRange = 1.1f;
+    [Tooltip("1マスは1.1fが安全")]
+    [SerializeField] float takeDamageRange = 1.1f;
 
     Player player;
     Vector2 curPos;
@@ -28,17 +32,6 @@ public class Enemy : MonoBehaviour
         curPos = transform.position;
         currentHealth = health;
         StartCoroutine(Movement());
-    }
-
-    bool isHit(string direction, Vector2 myPos, Vector2 hitSize, LayerMask targetMask)
-    {
-        // TODO: 引数をup right down leftに指定したい
-        if (direction == "up") return Physics2D.OverlapBox(myPos + Vector2.up, hitSize, 0, targetMask);
-        else if (direction == "right") return Physics2D.OverlapBox(myPos + Vector2.right, hitSize, 0, targetMask);
-        else if (direction == "down") return Physics2D.OverlapBox(myPos + Vector2.down, hitSize, 0, targetMask);
-        else if (direction == "left") return Physics2D.OverlapBox(myPos + Vector2.left, hitSize, 0, targetMask);
-
-        return false;
     }
 
     /// <summary>
@@ -147,11 +140,11 @@ public class Enemy : MonoBehaviour
             if (!isMoving)
             {
                 // プレイヤーとの距離を取得
-                float dist = Vector2.Distance(transform.position, player.transform.position);
+                float dist = GetDistanceFromPlayer();
                 if (dist <= alertRange)
                 {
                     // 攻撃
-                    if (dist <= 1.1f) // 1マスは1.1の方が安全
+                    if (dist <= attackRange)
                     {
                         Attack();
                         yield return new WaitForSeconds(Random.Range(.5f, 1.15f));
@@ -204,10 +197,23 @@ public class Enemy : MonoBehaviour
     private void OnMouseDown()
     {
         // 敵をタップでも攻撃可能
-        Vector2 hitSize = Vector2.one * .8f;
-        if (isHit("up", curPos, hitSize, playerMask) || isHit("right", curPos, hitSize, playerMask) || isHit("down", curPos, hitSize, playerMask) || isHit("left", curPos, hitSize, playerMask))
-        {
-            TakeDamage(player.CurrentPower);
-        }
+        float dist = GetDistanceFromPlayer();
+        if (dist <= takeDamageRange) TakeDamage(player.CurrentPower);
+    }
+
+    bool isHit(string direction, Vector2 myPos, Vector2 hitSize, LayerMask targetMask)
+    {
+        // TODO: 引数をup right down leftに指定したい
+        if (direction == "up") return Physics2D.OverlapBox(myPos + Vector2.up, hitSize, 0, targetMask);
+        else if (direction == "right") return Physics2D.OverlapBox(myPos + Vector2.right, hitSize, 0, targetMask);
+        else if (direction == "down") return Physics2D.OverlapBox(myPos + Vector2.down, hitSize, 0, targetMask);
+        else if (direction == "left") return Physics2D.OverlapBox(myPos + Vector2.left, hitSize, 0, targetMask);
+
+        return false;
+    }
+
+    float GetDistanceFromPlayer()
+    {
+        return Vector2.Distance(transform.position, player.transform.position);
     }
 }
