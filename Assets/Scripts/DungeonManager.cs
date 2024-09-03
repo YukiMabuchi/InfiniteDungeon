@@ -2,31 +2,62 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public enum DungeonType { Caverns, Rooms, Winding }
 
 public class DungeonManager : MonoBehaviour
 {
-    public GameObject floorPrefab, wallPrefab, tilePrefab, exitPrefab;
-    public GameObject[] randomItems, randomEnemies;
-    [Range(50, 1000)] public int totalFloorCount;
-    [Range(0, 100)] public int itemSpawnPercent;
-    [Range(0, 100)] public int enemySpawnPercent;
-    [Tooltip("DungeonTypeがWindingの時、低いほど部屋が作成される")]
-    [Range(0, 100)] public int windingHallPercent;
-    public DungeonType dungeonType;
+    public static DungeonManager instance;
 
+    [SerializeField] GameObject playerPrefab, floorPrefab, wallPrefab, tilePrefab, exitPrefab;
+    [SerializeField] GameObject[] randomItems, randomEnemies;
+    [Range(50, 1000)][SerializeField] int totalFloorCount;
+    [Range(0, 100)][SerializeField] int itemSpawnPercent;
+    [Range(0, 100)][SerializeField] int enemySpawnPercent;
+    [Tooltip("DungeonTypeがWindingの時、低いほど部屋が作成される")]
+    [Range(0, 100)][SerializeField] int windingHallPercent;
+    [SerializeField] DungeonType dungeonType;
+    [SerializeField] TextMeshProUGUI floorCount;
     [HideInInspector] public float minX, maxX, minY, maxY;
 
     List<Vector3> floorList = new List<Vector3>();
     Vector3 doorPos;
     LayerMask floorMask;
     LayerMask wallMask;
+    int currentFloorCount = 0;
+
+    public GameObject FloorPrefab { get { return floorPrefab; } }
+    public GameObject WallPrefab { get { return wallPrefab; } }
+
+    void Awake()
+    {
+        if (instance == null) instance = this;
+        UpdateFloorCount();
+    }
 
     void Start()
     {
         floorMask = LayerMask.GetMask("Floor");
         wallMask = LayerMask.GetMask("Wall");
+
+        GenerateDungeon();
+    }
+    void Update()
+    {
+        // テスト用
+        if (Application.isEditor && Input.GetKeyDown(KeyCode.Backspace))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+    }
+
+    public void GenerateDungeon()
+    {
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
 
         switch (dungeonType)
         {
@@ -40,14 +71,8 @@ public class DungeonManager : MonoBehaviour
                 WindingWalker();
                 break;
         }
-    }
-    void Update()
-    {
-        // テスト用
-        if (Application.isEditor && Input.GetKeyDown(KeyCode.Backspace))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
+
+        Player.instance.RelocatePlayer();
     }
 
     /// <summary>
@@ -55,6 +80,7 @@ public class DungeonManager : MonoBehaviour
     /// </summary>
     void RandomWalker()
     {
+        floorList.Clear();
         Vector3 curPos = Vector3.zero; // x: 0, y: 0, z: 0
         floorList.Add(curPos);
 
@@ -72,6 +98,7 @@ public class DungeonManager : MonoBehaviour
 
     void RoomWalker()
     {
+        floorList.Clear();
         Vector3 curPos = Vector3.zero; // x: 0, y: 0, z: 0
         floorList.Add(curPos);
 
@@ -92,6 +119,7 @@ public class DungeonManager : MonoBehaviour
     /// </summary>
     void WindingWalker()
     {
+        floorList.Clear();
         Vector3 curPos = Vector3.zero; // x: 0, y: 0, z: 0
         floorList.Add(curPos);
 
@@ -217,7 +245,6 @@ public class DungeonManager : MonoBehaviour
                 }
             }
         }
-
     }
 
     void RandomEnemies(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)
@@ -259,5 +286,11 @@ public class DungeonManager : MonoBehaviour
         GameObject goDoor = Instantiate(exitPrefab, doorPos, Quaternion.identity);
         goDoor.name = exitPrefab.name;
         goDoor.transform.SetParent(transform);
+    }
+
+    public void UpdateFloorCount()
+    {
+        currentFloorCount += 1;
+        floorCount.text = currentFloorCount.ToString();
     }
 }

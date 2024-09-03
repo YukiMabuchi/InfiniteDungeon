@@ -7,16 +7,16 @@ public class TileSpawner : MonoBehaviour
     private void Awake()
     {
         dungeonManager = FindObjectOfType<DungeonManager>();
-        GameObject goFloor = Instantiate(dungeonManager.floorPrefab, transform.position, Quaternion.identity);
-        goFloor.name = dungeonManager.floorPrefab.name;
+        GameObject goFloor = Instantiate(dungeonManager.FloorPrefab, transform.position, Quaternion.identity);
+        goFloor.name = dungeonManager.FloorPrefab.name;
         goFloor.transform.SetParent(dungeonManager.transform);
 
         if (transform.position.x > dungeonManager.maxX) dungeonManager.maxX = transform.position.x;
         if (transform.position.x < dungeonManager.minX) dungeonManager.minX = transform.position.x;
         if (transform.position.y > dungeonManager.maxY) dungeonManager.maxY = transform.position.y;
         if (transform.position.y < dungeonManager.minY) dungeonManager.minY = transform.position.y;
-
     }
+
     void Start()
     {
         // 床の縦横それぞれに壁を作る
@@ -30,8 +30,8 @@ public class TileSpawner : MonoBehaviour
                 Collider2D hit = Physics2D.OverlapBox(targetPos, hitSize, 0, envMask);
                 if (!hit)
                 {
-                    GameObject goWall = Instantiate(dungeonManager.wallPrefab, targetPos, Quaternion.identity);
-                    goWall.name = dungeonManager.wallPrefab.name;
+                    GameObject goWall = Instantiate(dungeonManager.WallPrefab, targetPos, Quaternion.identity);
+                    goWall.name = dungeonManager.WallPrefab.name;
                     goWall.transform.SetParent(dungeonManager.transform);
                 }
             }

@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    public static Player instance;
+
     [SerializeField] int health = 12;
     [SerializeField] int power = 4;
     // [SerializeField] int stamina; // TODO
@@ -20,6 +22,11 @@ public class Player : MonoBehaviour
     bool isMoving;
 
     public int CurrentPower { get { return currentPower; } }
+
+    void Awake()
+    {
+        if (instance == null) instance = this;
+    }
 
     void Start()
     {
@@ -102,5 +109,12 @@ public class Player : MonoBehaviour
         currentHealth -= damageToTake;
         healthBar.value = currentHealth;
         if (currentHealth <= 0) GameManager.instance.ShowGameOverPopup();
+    }
+
+    // リスタート
+    public void RelocatePlayer()
+    {
+        targetPos = new Vector2(0, 0);
+        transform.position = targetPos;
     }
 }
