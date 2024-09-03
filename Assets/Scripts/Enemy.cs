@@ -176,7 +176,7 @@ public class Enemy : MonoBehaviour
     public void Attack()
     {
         int roll = Random.Range(0, 100);
-        if (attackPercentage <= roll)
+        if (roll <= attackPercentage)
         {
             Debug.Log(name + " attacked and hit for " + power + " points of damage");
             player.TakeDamage(power);
