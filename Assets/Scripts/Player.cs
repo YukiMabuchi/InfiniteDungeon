@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class Player : MonoBehaviour
     [SerializeField] int power = 4;
     // [SerializeField] int stamina; // TODO
     [SerializeField] float speed;
+    [SerializeField] Slider healthBar;
     LayerMask obstacleMask;
     Vector2 targetPos;
     Transform GFX;
@@ -23,6 +25,8 @@ public class Player : MonoBehaviour
     {
         currentHealth = health;
         currentPower = power;
+        healthBar.maxValue = currentHealth;
+        healthBar.value = currentHealth;
         obstacleMask = LayerMask.GetMask("Wall", "Enemy");
         GFX = GetComponentInChildren<SpriteRenderer>().transform;
         flipx = GFX.localScale.x;
@@ -96,6 +100,7 @@ public class Player : MonoBehaviour
     public void TakeDamage(int damageToTake)
     {
         currentHealth -= damageToTake;
+        healthBar.value = currentHealth;
         if (currentHealth <= 0) GameManager.instance.ShowGameOverPopup();
     }
 }
