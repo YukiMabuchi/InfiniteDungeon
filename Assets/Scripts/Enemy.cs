@@ -4,25 +4,41 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public float alertRange;
-    public Vector2 patrolInterval;
-    public float chaseSpeed;
-    public Vector2 damageRange;
+
+    [SerializeField] int health = 10;
+    [SerializeField] float alertRange;
+    [SerializeField] Vector2 patrolInterval;
+    [SerializeField] float chaseSpeed;
+    [SerializeField] Vector2 damageRange;
 
     Player player;
     Vector2 curPos;
-    LayerMask obstacleMask, unwalkableMask;
+    LayerMask playerMask, obstacleMask, unwalkableMask;
     List<Vector2> availableMovementList = new List<Vector2>();
     List<Node> nodesList = new List<Node>();
     bool isMoving;
+    int currentHealth = 0;
 
     void Start()
     {
         player = FindObjectOfType<Player>();
+        playerMask = LayerMask.GetMask("Player");
         obstacleMask = LayerMask.GetMask("Wall", "Enemy", "Player");
         unwalkableMask = LayerMask.GetMask("Wall", "Enemy");
         curPos = transform.position;
+        currentHealth = health;
         StartCoroutine(Movement());
+    }
+
+    bool isHit(string direction, Vector2 myPos, Vector2 hitSize, LayerMask targetMask)
+    {
+        // TODO: 引数をup right down leftに指定したい
+        if (direction == "up") return Physics2D.OverlapBox(myPos + Vector2.up, hitSize, 0, targetMask);
+        else if (direction == "right") return Physics2D.OverlapBox(myPos + Vector2.right, hitSize, 0, targetMask);
+        else if (direction == "down") return Physics2D.OverlapBox(myPos + Vector2.down, hitSize, 0, targetMask);
+        else if (direction == "left") return Physics2D.OverlapBox(myPos + Vector2.left, hitSize, 0, targetMask);
+
+        return false;
     }
 
     /// <summary>
@@ -30,34 +46,13 @@ public class Enemy : MonoBehaviour
     /// </summary>
     void Patrol()
     {
-        availableMovementList.Clear();
-
-        Vector2 hitSize = Vector2.one * .8f;
-
         // 進行可能マスの生成
-        Collider2D hitUp = Physics2D.OverlapBox(curPos + Vector2.up, hitSize, 0, obstacleMask);
-        if (!hitUp)
-        {
-            availableMovementList.Add(Vector2.up);
-        }
-
-        Collider2D hitRight = Physics2D.OverlapBox(curPos + Vector2.right, hitSize, 0, obstacleMask);
-        if (!hitRight)
-        {
-            availableMovementList.Add(Vector2.right);
-        }
-
-        Collider2D hitDown = Physics2D.OverlapBox(curPos + Vector2.down, hitSize, 0, obstacleMask);
-        if (!hitDown)
-        {
-            availableMovementList.Add(Vector2.down);
-        }
-
-        Collider2D hitLeft = Physics2D.OverlapBox(curPos + Vector2.left, hitSize, 0, obstacleMask);
-        if (!hitLeft)
-        {
-            availableMovementList.Add(Vector2.left);
-        }
+        availableMovementList.Clear();
+        Vector2 hitSize = Vector2.one * .8f;
+        if (!isHit("up", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.up);
+        if (!isHit("right", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.right);
+        if (!isHit("down", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.down);
+        if (!isHit("left", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.left);
 
         // 進行方向を進行可能なマスからランダムに1マス選ぶ
         if (availableMovementList.Count > 0)
@@ -67,21 +62,6 @@ public class Enemy : MonoBehaviour
         }
 
         StartCoroutine(SmoothMove(Random.Range(patrolInterval.x, patrolInterval.y)));
-    }
-
-    // TODO
-    void Attack()
-    {
-        int roll = Random.Range(0, 100);
-        if (roll > 50)
-        {
-            float damageAmount = Mathf.Ceil(Random.Range(damageRange.x, damageRange.y));
-            Debug.Log(name + " attacked and hit for " + damageAmount + " points of damage");
-        }
-        else
-        {
-            Debug.Log(name + " attacked and missed");
-        }
     }
 
     /// <summary>
@@ -197,6 +177,37 @@ public class Enemy : MonoBehaviour
                     Patrol();
                 }
             }
+        }
+    }
+
+    // TODO 攻撃
+    void Attack()
+    {
+        int roll = Random.Range(0, 100);
+        if (roll > 50)
+        {
+            float damageAmount = Mathf.Ceil(Random.Range(damageRange.x, damageRange.y));
+            Debug.Log(name + " attacked and hit for " + damageAmount + " points of damage");
+        }
+        else
+        {
+            Debug.Log(name + " attacked and missed");
+        }
+    }
+
+    public void TakeDamage(int damageToTake)
+    {
+        currentHealth -= damageToTake;
+        if (currentHealth <= 0) Destroy(gameObject);
+    }
+
+    private void OnMouseDown()
+    {
+        // 敵をタップでも攻撃可能
+        Vector2 hitSize = Vector2.one * .8f;
+        if (isHit("up", curPos, hitSize, playerMask) || isHit("right", curPos, hitSize, playerMask) || isHit("down", curPos, hitSize, playerMask) || isHit("left", curPos, hitSize, playerMask))
+        {
+            TakeDamage(player.CurrentPower);
         }
     }
 }

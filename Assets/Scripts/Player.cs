@@ -4,20 +4,27 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float speed;
+    [SerializeField] int power;
+    [SerializeField] float speed;
     LayerMask obstacleMask;
     Vector2 targetPos;
     Transform GFX;
+
+    int currentPower;
     float flipx;
     bool isMoving;
 
+    public int CurrentPower { get { return currentPower; } }
+
     void Start()
     {
+        currentPower = power;
         obstacleMask = LayerMask.GetMask("Wall", "Enemy");
         GFX = GetComponentInChildren<SpriteRenderer>().transform;
         flipx = GFX.localScale.x;
     }
 
+    // 移動
     public void Move(string direction)
     {
         bool isHorizontal = direction == "left" || direction == "right";
