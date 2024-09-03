@@ -565,6 +565,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1777211512 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5278572029494874090, guid: d0178ffb4947a462aa7c25bd6ed26169, type: 3}
+  m_PrefabInstance: {fileID: 4499643387478296770}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1777211513 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 149840560918285802, guid: d0178ffb4947a462aa7c25bd6ed26169, type: 3}
@@ -968,7 +973,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5278572029494874090, guid: d0178ffb4947a462aa7c25bd6ed26169, type: 3}
       propertyPath: m_Name
-      value: PopPanel
+      value: GameOverPop
+      objectReference: {fileID: 0}
+    - target: {fileID: 5278572029494874090, guid: d0178ffb4947a462aa7c25bd6ed26169, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8256209002557265030, guid: d0178ffb4947a462aa7c25bd6ed26169, type: 3}
       propertyPath: m_Color.a
@@ -1042,6 +1051,10 @@ PrefabInstance:
       propertyPath: power
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 1795354028551875640, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
+      propertyPath: health
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 6346645781272467632, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1107,6 +1120,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2566731522059990284, guid: 5ed2730e5a0254624951f1f473bc0a2f, type: 3}
+      propertyPath: gameOverPopup
+      value: 
+      objectReference: {fileID: 1777211512}
     - target: {fileID: 7245062309059020983, guid: 5ed2730e5a0254624951f1f473bc0a2f, type: 3}
       propertyPath: m_Name
       value: GameManager
