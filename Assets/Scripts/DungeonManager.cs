@@ -21,6 +21,7 @@ public class DungeonManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI floorCount;
     [HideInInspector] public float minX, maxX, minY, maxY;
 
+    List<GameObject> floors = new List<GameObject>();
     List<Vector3> floorList = new List<Vector3>();
     Vector3 doorPos;
     LayerMask floorMask;
@@ -58,6 +59,8 @@ public class DungeonManager : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        floorList.Clear();
+        floors.Clear();
 
         switch (dungeonType)
         {
@@ -80,7 +83,6 @@ public class DungeonManager : MonoBehaviour
     /// </summary>
     void RandomWalker()
     {
-        floorList.Clear();
         Vector3 curPos = Vector3.zero; // x: 0, y: 0, z: 0
         floorList.Add(curPos);
 
@@ -98,7 +100,6 @@ public class DungeonManager : MonoBehaviour
 
     void RoomWalker()
     {
-        floorList.Clear();
         Vector3 curPos = Vector3.zero; // x: 0, y: 0, z: 0
         floorList.Add(curPos);
 
@@ -119,7 +120,6 @@ public class DungeonManager : MonoBehaviour
     /// </summary>
     void WindingWalker()
     {
-        floorList.Clear();
         Vector3 curPos = Vector3.zero; // x: 0, y: 0, z: 0
         floorList.Add(curPos);
 
@@ -292,5 +292,20 @@ public class DungeonManager : MonoBehaviour
     {
         currentFloorCount += 1;
         floorCount.text = currentFloorCount.ToString();
+    }
+
+    public void SetFloors(GameObject floor)
+    {
+        floors.Add(floor);
+    }
+
+    public GameObject GetFloorByPos(Vector3 targetPos)
+    {
+        if (floors == null || floors.Count == 0) return null;
+        foreach (GameObject floor in floors)
+        {
+            if (floor != null && Vector3.Equals(floor.transform.position, targetPos)) return floor;
+        }
+        return null;
     }
 }

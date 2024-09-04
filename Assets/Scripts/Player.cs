@@ -12,12 +12,13 @@ public class Player : MonoBehaviour
     // [SerializeField] int stamina; // TODO
     [SerializeField] float speed;
     [SerializeField] Slider healthBar;
-    LayerMask obstacleMask;
+    LayerMask obstacleMask, enemyMask;
     Vector2 targetPos;
     Transform GFX;
 
     int currentHealth = 0;
     int currentPower = 0;
+    string currentDirection = "down";
     float flipx;
     bool isMoving;
 
@@ -35,6 +36,7 @@ public class Player : MonoBehaviour
         healthBar.maxValue = currentHealth;
         healthBar.value = currentHealth;
         obstacleMask = LayerMask.GetMask("Wall", "Enemy");
+        enemyMask = LayerMask.GetMask("Enemy");
         GFX = GetComponentInChildren<SpriteRenderer>().transform;
         flipx = GFX.localScale.x;
     }
@@ -42,39 +44,13 @@ public class Player : MonoBehaviour
     // 移動
     public void Move(string direction)
     {
-        bool isHorizontal = direction == "left" || direction == "right";
-        bool isVertical = direction == "up" || direction == "down";
-        int directionNum = GetDirection(direction);
+        currentDirection = direction;
 
         // キャラの向き
-        if (isHorizontal)
-        {
-            GFX.localScale = new Vector2(flipx * directionNum, GFX.localScale.y);
-        }
+        if (currentDirection == "left" || currentDirection == "right") GFX.localScale = new Vector2(flipx * GetDirection(currentDirection), GFX.localScale.y);
 
         // キャラの進行
-        if (!isMoving)
-        {
-            // 進行先の設定 (1マス先)
-            if (isHorizontal)
-            {
-                targetPos = new Vector2(transform.position.x + directionNum, transform.position.y);
-            }
-            else if (isVertical)
-            {
-                targetPos = new Vector2(transform.position.x, transform.position.y + directionNum);
-            }
-
-            // check for collisions
-            Vector2 hitSize = Vector2.one * 0.8f;
-            Collider2D hit = Physics2D.OverlapBox(targetPos, hitSize, 0, obstacleMask);
-
-            // 進行
-            if (!hit)
-            {
-                StartCoroutine(SmoothMove());
-            }
-        }
+        if (!isMoving && !IsHit(currentDirection, obstacleMask)) StartCoroutine(SmoothMove());
     }
 
     IEnumerator SmoothMove()
@@ -87,6 +63,28 @@ public class Player : MonoBehaviour
         }
         transform.position = targetPos;
         isMoving = false;
+    }
+
+    /// <summary>
+    /// 指定方向で指定マスクに当たるかの判定
+    /// </summary>
+    bool IsHit(string direction, LayerMask targetMask)
+    {
+        int directionNum = GetDirection(direction);
+
+        // 進行先の設定 (1マス先)
+        if (direction == "left" || direction == "right")
+        {
+            targetPos = new Vector2(transform.position.x + directionNum, transform.position.y);
+        }
+        else if (currentDirection == "up" || currentDirection == "down")
+        {
+            targetPos = new Vector2(transform.position.x, transform.position.y + directionNum);
+        }
+
+        // check for collisions
+        Vector2 hitSize = Vector2.one * 0.8f;
+        return Physics2D.OverlapBox(targetPos, hitSize, 0, targetMask);
     }
 
     int GetDirection(string direction)
@@ -102,6 +100,17 @@ public class Player : MonoBehaviour
     }
 
     // 攻撃
+    public void Attack()
+    {
+        if (IsHit(currentDirection, enemyMask))
+        {
+            GameObject floor = DungeonManager.instance.GetFloorByPos(targetPos);
+            if (floor == null) return;
+
+            Enemy enemy = floor.GetComponentInChildren<Enemy>();
+            if (enemy != null) enemy.TakeDamage(power);
+        }
+    }
 
     // ダメージ
     public void TakeDamage(int damageToTake)

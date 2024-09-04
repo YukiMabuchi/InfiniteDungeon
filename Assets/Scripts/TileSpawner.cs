@@ -10,6 +10,7 @@ public class TileSpawner : MonoBehaviour
         GameObject goFloor = Instantiate(dungeonManager.FloorPrefab, transform.position, Quaternion.identity);
         goFloor.name = dungeonManager.FloorPrefab.name;
         goFloor.transform.SetParent(dungeonManager.transform);
+        dungeonManager.SetFloors(goFloor);
 
         if (transform.position.x > dungeonManager.maxX) dungeonManager.maxX = transform.position.x;
         if (transform.position.x < dungeonManager.minX) dungeonManager.minX = transform.position.x;

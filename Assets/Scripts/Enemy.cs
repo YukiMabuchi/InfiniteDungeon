@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    /*
+    NOTE: 自分の下のFloorが親コンポーネントになっている
+    */
 
     [SerializeField] int health = 10;
     [SerializeField] int power = 4;
@@ -42,10 +45,10 @@ public class Enemy : MonoBehaviour
         // 進行可能マスの生成
         availableMovementList.Clear();
         Vector2 hitSize = Vector2.one * .8f;
-        if (!isHit("up", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.up);
-        if (!isHit("right", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.right);
-        if (!isHit("down", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.down);
-        if (!isHit("left", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.left);
+        if (!IsHit("up", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.up);
+        if (!IsHit("right", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.right);
+        if (!IsHit("down", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.down);
+        if (!IsHit("left", curPos, hitSize, obstacleMask)) availableMovementList.Add(Vector2.left);
 
         // 進行方向を進行可能なマスからランダムに1マス選ぶ
         if (availableMovementList.Count > 0)
@@ -122,6 +125,10 @@ public class Enemy : MonoBehaviour
         }
         transform.position = curPos;
 
+        // 移動するごとに下のFloorを親にする
+        GameObject floor = DungeonManager.instance.GetFloorByPos(curPos);
+        if (floor != null) transform.SetParent(floor.transform);
+
         yield return new WaitForSeconds(speed); // TODO: プレイヤーが動くまで？
 
         isMoving = false;
@@ -189,6 +196,9 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damageToTake)
     {
+        float dist = GetDistanceFromPlayer();
+        if (dist > takeDamageRange) return;
+
         currentHealth -= damageToTake;
         if (currentHealth <= 0) Destroy(gameObject);
     }
@@ -196,11 +206,10 @@ public class Enemy : MonoBehaviour
     private void OnMouseDown()
     {
         // 敵をタップでも攻撃可能
-        float dist = GetDistanceFromPlayer();
-        if (dist <= takeDamageRange) TakeDamage(player.CurrentPower);
+        TakeDamage(player.CurrentPower);
     }
 
-    bool isHit(string direction, Vector2 myPos, Vector2 hitSize, LayerMask targetMask)
+    bool IsHit(string direction, Vector2 myPos, Vector2 hitSize, LayerMask targetMask)
     {
         // TODO: 引数をup right down leftに指定したい
         if (direction == "up") return Physics2D.OverlapBox(myPos + Vector2.up, hitSize, 0, targetMask);
