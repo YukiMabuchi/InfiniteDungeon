@@ -256,9 +256,9 @@ public class DungeonManager : MonoBehaviour
             if (roll <= enemySpawnPercent)
             {
                 int enemyIndex = Random.Range(0, randomEnemies.Length);
-                GameObject item = randomEnemies[enemyIndex];
-                GameObject goEnemy = Instantiate(item, hitFloor.transform.position, Quaternion.identity);
-                goEnemy.name = item.name;
+                GameObject enemy = randomEnemies[enemyIndex];
+                GameObject goEnemy = Instantiate(enemy, hitFloor.transform.position, Quaternion.identity);
+                goEnemy.name = enemy.name;
                 goEnemy.transform.SetParent(hitFloor.transform);
             }
         }
