@@ -206,6 +206,7 @@ public class Enemy : MonoBehaviour
     private void OnMouseDown()
     {
         // 敵をタップでも攻撃可能
+        player.IncreaseHealthByPlayerMovement();
         TakeDamage(player.CurrentPower);
     }
 

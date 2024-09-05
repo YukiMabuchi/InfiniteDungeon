@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     public static Player instance;
 
-    [SerializeField] int health = 12;
+    [SerializeField] int maxHealth = 12;
     [SerializeField] int power = 4;
     // [SerializeField] int stamina; // TODO
     [SerializeField] float speed;
@@ -22,6 +22,11 @@ public class Player : MonoBehaviour
     float flipx;
     bool isMoving;
 
+    /// <summary>
+    /// HP回復用Playerの動きの回数。回復するたびに0にする。
+    /// </summary>
+    int countForHealth = 0;
+
     public int CurrentPower { get { return currentPower; } }
 
     void Awake()
@@ -31,7 +36,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        currentHealth = health;
+        currentHealth = maxHealth;
         currentPower = power;
         healthBar.maxValue = currentHealth;
         healthBar.value = currentHealth;
@@ -62,6 +67,10 @@ public class Player : MonoBehaviour
             yield return null;
         }
         transform.position = targetPos;
+
+        // HP回復
+        IncreaseHealthByPlayerMovement();
+
         isMoving = false;
     }
 
@@ -102,6 +111,10 @@ public class Player : MonoBehaviour
     // 攻撃
     public void Attack()
     {
+        // HP回復
+        IncreaseHealthByPlayerMovement();
+
+        // 攻撃判定
         if (IsHit(currentDirection, enemyMask))
         {
             GameObject floor = DungeonManager.instance.GetFloorByPos(targetPos);
@@ -115,9 +128,35 @@ public class Player : MonoBehaviour
     // ダメージ
     public void TakeDamage(int damageToTake)
     {
-        currentHealth -= damageToTake;
-        healthBar.value = currentHealth;
+        DecreaseHealth(damageToTake);
         if (currentHealth <= 0) GameManager.instance.ShowGameOverPopup();
+    }
+
+    void IncreaseHealth(int amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        healthBar.value = currentHealth;
+    }
+
+    void DecreaseHealth(int amount)
+    {
+        currentHealth -= amount;
+        if (currentHealth < 0) currentHealth = 0;
+        healthBar.value = currentHealth;
+    }
+
+    /// <summary>
+    /// Playerの行動によりHPを回復する
+    /// </summary>
+    public void IncreaseHealthByPlayerMovement()
+    {
+        countForHealth++;
+        if (countForHealth == 2)
+        {
+            IncreaseHealth(1); // TODO: 体力回復の係数調整
+            countForHealth = 0;
+        }
     }
 
     // リスタート
