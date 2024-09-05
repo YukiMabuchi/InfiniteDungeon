@@ -21,6 +21,7 @@ public class DungeonManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI floorCount;
     [HideInInspector] public float minX, maxX, minY, maxY;
 
+    List<Enemy> ememies = new List<Enemy>();
     List<GameObject> floors = new List<GameObject>();
     List<Vector3> floorList = new List<Vector3>();
     Vector3 doorPos;
@@ -28,6 +29,7 @@ public class DungeonManager : MonoBehaviour
     LayerMask wallMask;
     int currentFloorCount = 0;
 
+    public List<Enemy> Enemies { get { return ememies; } }
     public GameObject FloorPrefab { get { return floorPrefab; } }
     public GameObject WallPrefab { get { return wallPrefab; } }
 
@@ -260,8 +262,18 @@ public class DungeonManager : MonoBehaviour
                 GameObject goEnemy = Instantiate(enemy, hitFloor.transform.position, Quaternion.identity);
                 goEnemy.name = enemy.name;
                 goEnemy.transform.SetParent(hitFloor.transform);
+                ememies.Add(goEnemy.GetComponent<Enemy>());
             }
         }
+    }
+
+    /// <summary>
+    /// 敵リストから特定の敵を削除する
+    /// </summary>
+    /// <param name="enemyToRemove"></param>
+    public void RemoveEnemy(Enemy enemyToRemove)
+    {
+        ememies.Remove(enemyToRemove);
     }
 
     void RandomItems(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)

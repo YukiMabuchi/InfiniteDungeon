@@ -10,9 +10,7 @@ public class Enemy : MonoBehaviour
 
     [SerializeField] int health = 10;
     [SerializeField] int power = 4;
-    [SerializeField] float alertRange;
-    [SerializeField] Vector2 patrolInterval;
-    [SerializeField] float chaseSpeed;
+    [SerializeField] float alertRange; // 追いかけるようになるレンジ
     [Tooltip("1マスは1.1fが安全")]
     [SerializeField] float attackRange = 1.1f;
     [Tooltip("1マスは1.1fが安全")]
@@ -34,7 +32,6 @@ public class Enemy : MonoBehaviour
         unwalkableMask = LayerMask.GetMask("Wall", "Enemy");
         curPos = transform.position;
         currentHealth = health;
-        StartCoroutine(Movement());
     }
 
     /// <summary>
@@ -57,7 +54,7 @@ public class Enemy : MonoBehaviour
             curPos += availableMovementList[randomIndex];
         }
 
-        StartCoroutine(SmoothMove(Random.Range(patrolInterval.x, patrolInterval.y)));
+        StartCoroutine(SmoothMove());
     }
 
     /// <summary>
@@ -75,19 +72,34 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    Vector2 FindNextStep(Vector2 startPos, Vector2 targetPos)
+    Vector2 FindNextStep(Vector2 startPos, Vector2 targetPos, float distanceToPlayer)
     {
-        int listIndex = 0;
         Vector2 myPos = startPos;
         nodesList.Clear();
-        nodesList.Add(new Node(startPos, startPos));
-        while (myPos != targetPos && listIndex < 1000 && nodesList.Count > 0) // TODO: listIndex < 1000は維持的、ダンジョンの大きさで最大値異なる
+
+        void _CheckSurroundingNodes()
         {
             // up, right, down, leftの移動可能なマスを追加
             CheckNode(myPos + Vector2.up, myPos);
             CheckNode(myPos + Vector2.right, myPos);
             CheckNode(myPos + Vector2.down, myPos);
             CheckNode(myPos + Vector2.left, myPos);
+        }
+
+        // もし追いかけてくる範囲外なら周り4マスをランダムに選択して終了
+        if (distanceToPlayer > alertRange)
+        {
+            _CheckSurroundingNodes();
+            if (nodesList.Count > 0) myPos = nodesList[Random.Range(0, nodesList.Count)].position;
+            return myPos;
+        }
+
+        // マス計算
+        int listIndex = 0;
+        nodesList.Add(new Node(startPos, startPos));
+        while (myPos != targetPos && listIndex < 1000 && nodesList.Count > 0) // TODO: listIndex < 1000は維持的、ダンジョンの大きさで最大値異なる
+        {
+            _CheckSurroundingNodes();
 
             listIndex++;
             if (listIndex < nodesList.Count)
@@ -115,7 +127,7 @@ public class Enemy : MonoBehaviour
         return startPos;
     }
 
-    IEnumerator SmoothMove(float speed)
+    IEnumerator SmoothMove()
     {
         isMoving = true;
         while (Vector2.Distance(transform.position, curPos) > .01f)
@@ -129,8 +141,6 @@ public class Enemy : MonoBehaviour
         GameObject floor = DungeonManager.instance.GetFloorByPos(curPos);
         if (floor != null) transform.SetParent(floor.transform);
 
-        yield return new WaitForSeconds(speed); // TODO: プレイヤーが動くまで？
-
         isMoving = false;
     }
 
@@ -138,43 +148,60 @@ public class Enemy : MonoBehaviour
     /// プレイヤーとの距離によって放浪するかプレイヤーを追いかけるかプレイヤーを攻撃する関数
     /// </summary>
     /// <returns></returns>
-    IEnumerator Movement()
+    public IEnumerator Movement()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(.1f);
+        // TODO: パフォーマンス改善
+        // TODO: 敵が重なる
+        // TODO: 意図せず離れたマスから攻撃を受ける
+        yield return new WaitForSeconds(GameManager.instance.TurnDelay);
 
-            if (!isMoving)
+        if (!isMoving)
+        {
+            // プレイヤーとの距離を取得
+            float distToPlayer = GetDistanceFromPlayer();
+
+            // 範囲外は放浪
+            if (distToPlayer > alertRange)
             {
-                // プレイヤーとの距離を取得
-                float dist = GetDistanceFromPlayer();
-                if (dist <= alertRange)
+                Debug.Log("範囲外放浪");
+                Patrol();
+            }
+            else
+            {
+                Debug.Log("範囲内 " + distToPlayer);
+
+                // 攻撃
+                if (distToPlayer <= attackRange)
                 {
-                    // 攻撃
-                    if (dist <= attackRange)
+                    Debug.Log("普通に攻撃");
+                    Attack();
+                }
+                // 追いかける
+                else
+                {
+                    Debug.Log("追いかける");
+
+                    Vector2 targetPos = player.TargetPos;
+                    Vector2 newPos = FindNextStep(transform.position, targetPos, distToPlayer);
+                    if (newPos != curPos)
                     {
-                        Attack();
-                        yield return new WaitForSeconds(Random.Range(.5f, 1.15f));
-                    }
-                    // 追いかける
-                    else
-                    {
-                        Vector2 newPos = FindNextStep(transform.position, player.transform.position);
-                        if (newPos != curPos)
+                        // 移動先がPlayerと同じ場合その場で攻撃する
+                        if (newPos == targetPos)
                         {
-                            curPos = newPos;
-                            StartCoroutine(SmoothMove(chaseSpeed));
+                            Debug.Log("その場で攻撃");
+                            Attack();
                         }
                         else
                         {
-                            Patrol();
+                            curPos = newPos;
+                            StartCoroutine(SmoothMove());
                         }
                     }
-                }
-                // 放浪
-                else
-                {
-                    Patrol();
+                    else
+                    {
+                        Debug.Log("動きなし");
+                        Patrol();
+                    }
                 }
             }
         }
@@ -200,15 +227,24 @@ public class Enemy : MonoBehaviour
         if (dist > takeDamageRange) return;
 
         currentHealth -= damageToTake;
-        if (currentHealth <= 0) Destroy(gameObject);
+        if (currentHealth <= 0) Die();
     }
 
-    private void OnMouseDown()
+    /// <summary>
+    /// 敵を破壊する時にDungeonManagerのEnemeisリストからも削除する
+    /// </summary>
+    void Die()
     {
-        // 敵をタップでも攻撃可能
-        player.IncreaseHealthByPlayerMovement();
-        TakeDamage(player.CurrentPower);
+        DungeonManager.instance.RemoveEnemy(this);
+        Destroy(gameObject);
     }
+
+    // private void OnMouseDown()
+    // {
+    //     // 敵をタップでも攻撃可能
+    //     player.IncreaseHealthByPlayerMovement();
+    //     TakeDamage(player.CurrentPower);
+    // }
 
     bool IsHit(string direction, Vector2 myPos, Vector2 hitSize, LayerMask targetMask)
     {

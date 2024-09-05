@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    /*
+    NOTE: 行動系 (eg 移動、攻撃)はGameState.Waitingの状態で行い、終了時にSetCurrentState(GameState.PlayerTurn)をする
+    */
+
     public static Player instance;
 
     [SerializeField] int maxHealth = 12;
@@ -28,6 +32,7 @@ public class Player : MonoBehaviour
     int countForHealth = 0;
 
     public int CurrentPower { get { return currentPower; } }
+    public Vector2 TargetPos { get { return targetPos; } }
 
     void Awake()
     {
@@ -49,13 +54,19 @@ public class Player : MonoBehaviour
     // 移動
     public void Move(string direction)
     {
-        currentDirection = direction;
+        if (GameManager.instance.CurrentGameState == GameState.Waiting)
+        {
+            currentDirection = direction;
 
-        // キャラの向き
-        if (currentDirection == "left" || currentDirection == "right") GFX.localScale = new Vector2(flipx * GetDirection(currentDirection), GFX.localScale.y);
+            // キャラの向き
+            if (currentDirection == "left" || currentDirection == "right") GFX.localScale = new Vector2(flipx * GetDirection(currentDirection), GFX.localScale.y);
 
-        // キャラの進行
-        if (!isMoving && !IsHit(currentDirection, obstacleMask)) StartCoroutine(SmoothMove());
+            // キャラの進行
+            if (!isMoving && !IsHit(currentDirection, obstacleMask)) StartCoroutine(SmoothMove());
+            else return; // 壁などで移動できていない時GameStateを変更せずreturn
+
+            GameManager.instance.SetCurrentState(GameState.PlayerTurn);
+        }
     }
 
     IEnumerator SmoothMove()
@@ -111,17 +122,21 @@ public class Player : MonoBehaviour
     // 攻撃
     public void Attack()
     {
-        // HP回復
-        IncreaseHealthByPlayerMovement();
-
-        // 攻撃判定
-        if (IsHit(currentDirection, enemyMask))
+        if (GameManager.instance.CurrentGameState == GameState.Waiting)
         {
-            GameObject floor = DungeonManager.instance.GetFloorByPos(targetPos);
-            if (floor == null) return;
+            // HP回復
+            IncreaseHealthByPlayerMovement();
 
-            Enemy enemy = floor.GetComponentInChildren<Enemy>();
-            if (enemy != null) enemy.TakeDamage(power);
+            // 攻撃判定
+            if (IsHit(currentDirection, enemyMask))
+            {
+                GameObject floor = DungeonManager.instance.GetFloorByPos(targetPos);
+                if (floor == null) return;
+
+                Enemy enemy = floor.GetComponentInChildren<Enemy>();
+                if (enemy != null) enemy.TakeDamage(power);
+            }
+            GameManager.instance.SetCurrentState(GameState.PlayerTurn);
         }
     }
 
