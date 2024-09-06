@@ -24,6 +24,7 @@ public class Player : MonoBehaviour
     string currentDirection = "down";
     float flipx;
     bool isMoving;
+    bool relocated;
 
     public int CurrentPower { get { return currentPower; } }
     public Vector2 TargetPos { get { return targetPos; } }
@@ -69,17 +70,27 @@ public class Player : MonoBehaviour
     IEnumerator SmoothMove(Vector2 posToMove)
     {
         isMoving = true;
-        while (Vector2.Distance(transform.position, posToMove) > 0.01f)
+
+        // 移動中
+        // NOTE: フロア移動中などcoroutine残り続けるので、フラグをwhileの条件に追加する必要あり
+        while (!relocated && Vector2.Distance(transform.position, posToMove) > 0.01f)
         {
             transform.position = Vector2.MoveTowards(transform.position, posToMove, speed * Time.deltaTime);
             yield return null;
         }
-        transform.position = posToMove;
 
-        // HP回復
-        playerHealth.IncreaseHealthByPlayerMovement();
-
+        // 移動終了
         isMoving = false;
+
+        if (relocated)
+        {
+            RelocatePlayer();
+        }
+        else
+        {
+            playerHealth.IncreaseHealthByPlayerMovement();
+            transform.position = posToMove;
+        }
     }
 
     Vector2 GenerateTargetPos(string direction)
@@ -161,9 +172,15 @@ public class Player : MonoBehaviour
     }
 
     // リスタート
+    public void SetRelocated(bool state)
+    {
+        relocated = state;
+    }
+
     public void RelocatePlayer()
     {
         targetPos = GenerateTargetPos("relocate");
         transform.position = targetPos;
+        SetRelocated(false);
     }
 }
