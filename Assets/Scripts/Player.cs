@@ -57,7 +57,7 @@ public class Player : MonoBehaviour
     // 移動
     public void Move(string direction)
     {
-        if (GameManager.instance.CurrentGameState == GameState.Waiting)
+        if (!isMoving && GameManager.instance.CurrentGameState == GameState.Waiting)
         {
             currentDirection = direction;
 
