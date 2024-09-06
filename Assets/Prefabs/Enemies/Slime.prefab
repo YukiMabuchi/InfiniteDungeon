@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8885248901763176058}
   - component: {fileID: 9221109862612524302}
   - component: {fileID: 7583879354104875071}
-  - component: {fileID: 840227481056556961}
+  - component: {fileID: 5089277438875279824}
   m_Layer: 7
   m_Name: Slime
   m_TagString: Untagged
@@ -149,7 +149,7 @@ MonoBehaviour:
   alertRange: 8
   attackRange: 1.1
   takeDamageRange: 1.1
---- !u!114 &840227481056556961
+--- !u!114 &5089277438875279824
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

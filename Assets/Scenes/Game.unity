@@ -447,7 +447,7 @@ MonoBehaviour:
   itemSpawnPercent: 0
   enemySpawnPercent: 8
   windingHallPercent: 20
-  dungeonType: 0
+  dungeonType: 2
   floorCount: {fileID: 1223224156}
   minX: 0
   maxX: 0
@@ -2538,6 +2538,10 @@ PrefabInstance:
     - target: {fileID: 6346645781272467632, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6766870274027090000, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
+      propertyPath: maxPower
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7152506571424122259, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
       propertyPath: xpBar

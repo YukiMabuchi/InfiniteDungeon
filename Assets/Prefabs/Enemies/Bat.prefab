@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8001994434509039794}
   - component: {fileID: 3603034829118705372}
   - component: {fileID: 6566767061297492207}
-  - component: {fileID: 450627252978206489}
+  - component: {fileID: 6617955554071391604}
   m_Layer: 7
   m_Name: Bat
   m_TagString: Untagged
@@ -149,7 +149,7 @@ MonoBehaviour:
   alertRange: 8
   attackRange: 1.1
   takeDamageRange: 1.1
---- !u!114 &450627252978206489
+--- !u!114 &6617955554071391604
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

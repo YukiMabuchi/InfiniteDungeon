@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5968841086662963029}
   - component: {fileID: 1093914168150235157}
   - component: {fileID: 8265046584104693470}
-  - component: {fileID: 3836635658088950354}
+  - component: {fileID: -2905605348295363452}
   m_Layer: 7
   m_Name: Goblin
   m_TagString: Untagged
@@ -149,7 +149,7 @@ MonoBehaviour:
   alertRange: 8
   attackRange: 1.1
   takeDamageRange: 1.1
---- !u!114 &3836635658088950354
+--- !u!114 &-2905605348295363452
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

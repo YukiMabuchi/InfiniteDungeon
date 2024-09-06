@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5412804507400523042}
   - component: {fileID: 6496975147801458440}
   - component: {fileID: -2234321864732143425}
-  - component: {fileID: -2892603415457525074}
+  - component: {fileID: -1428314927142752621}
   m_Layer: 7
   m_Name: Ghost
   m_TagString: Untagged
@@ -149,7 +149,7 @@ MonoBehaviour:
   alertRange: 8
   attackRange: 1.1
   takeDamageRange: 1.1
---- !u!114 &-2892603415457525074
+--- !u!114 &-1428314927142752621
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
