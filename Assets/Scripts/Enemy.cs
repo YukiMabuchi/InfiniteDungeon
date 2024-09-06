@@ -151,7 +151,7 @@ public class Enemy : MonoBehaviour
     {
         // TODO: パフォーマンス改善
         // TODO: 1体1マス以内に入ると他の敵が1マス以内に来ない
-        // TODO: 意図せず離れたマスから攻撃を受ける
+        // TODO: 意図せず離れたマスから攻撃を受ける => 2体縦に並んだ時1対手前倒すと起こる、1体倒すと斜め攻撃もなった
         yield return new WaitForSeconds(GameManager.instance.TurnDelay);
 
         if (!isMoving)
