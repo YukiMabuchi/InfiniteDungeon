@@ -12,9 +12,10 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public enum GameState
 {
-    Waiting,
+    Waiting, // 動作の開始に対する判定に使用
     PlayerTurn,
-    EnemyTurn
+    EnemyTurn,
+    FloorChange // 動作の終了に対する判定に使用
 };
 
 public class GameManager : MonoBehaviour
@@ -60,6 +61,10 @@ public class GameManager : MonoBehaviour
             case GameState.EnemyTurn:
                 StartCoroutine(EnemyTurn());
                 break;
+
+            case GameState.FloorChange:
+                StartCoroutine(FloorChange());
+                break;
         }
     }
 
@@ -87,6 +92,12 @@ public class GameManager : MonoBehaviour
             yield return coroutine;
         }
 
+        SetCurrentState(GameState.Waiting);
+    }
+
+    IEnumerator FloorChange()
+    {
+        yield return new WaitForSeconds(turnDelay);
         SetCurrentState(GameState.Waiting);
     }
 

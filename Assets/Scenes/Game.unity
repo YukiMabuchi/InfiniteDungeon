@@ -447,7 +447,7 @@ MonoBehaviour:
   itemSpawnPercent: 0
   enemySpawnPercent: 8
   windingHallPercent: 20
-  dungeonType: 2
+  dungeonType: 0
   floorCount: {fileID: 1223224156}
   minX: 0
   maxX: 0

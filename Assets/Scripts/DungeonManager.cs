@@ -79,7 +79,7 @@ public class DungeonManager : MonoBehaviour
                 break;
         }
 
-        Player.instance.SetRelocated(true);
+        GameManager.instance.SetCurrentState(GameState.FloorChange);
     }
 
     /// <summary>

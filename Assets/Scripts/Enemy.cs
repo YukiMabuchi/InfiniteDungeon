@@ -131,7 +131,7 @@ public class Enemy : MonoBehaviour
     IEnumerator SmoothMove()
     {
         isMoving = true;
-        while (Vector2.Distance(transform.position, curPos) > .01f)
+        while (GameManager.instance.CurrentGameState != GameState.FloorChange && Vector2.Distance(transform.position, curPos) > .01f)
         {
             transform.position = Vector2.MoveTowards(transform.position, curPos, 5f * Time.deltaTime);
             yield return null; // 1フレーム待つ
