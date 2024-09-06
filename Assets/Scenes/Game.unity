@@ -309,7 +309,7 @@ MonoBehaviour:
   - {fileID: 3439748904126508851, guid: 983d6549913e14c1dbbc1daf53e593a8, type: 3}
   - {fileID: 5843895985886124414, guid: 68360e8e4f8e7403b93b6f2186e2f2fe, type: 3}
   - {fileID: 3408234139849399945, guid: f73c65afb546245378e96f38221144e2, type: 3}
-  totalFloorCount: 300
+  totalFloorCount: 200
   itemSpawnPercent: 0
   enemySpawnPercent: 8
   windingHallPercent: 20
@@ -376,6 +376,34 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8041047976311623321, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
   m_PrefabInstance: {fileID: 9091640150789177773}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &366446902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 366446898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58452de9eb81d47808dcc325ebcf1006, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 12
+  healthBar: {fileID: 2135152418}
+  healthCount: {fileID: 1167618795}
+  healthRamp: 2
+--- !u!114 &366446903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 366446898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76716c7c0ef06434886e11e12f8fe493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &446678291
 GameObject:
   m_ObjectHideFlags: 0
@@ -2208,7 +2236,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8041047976311623321, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 366446902}
+    - targetCorrespondingSourceObject: {fileID: 8041047976311623321, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 366446903}
   m_SourcePrefab: {fileID: 100100000, guid: 107c4df072d72479e869462ed83eeb5e, type: 3}
 --- !u!1001 &9135243758760374009
 PrefabInstance:

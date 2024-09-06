@@ -17,6 +17,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] float takeDamageRange = 1.1f;
 
     Player player;
+    EnemyXp enemyXp;
     Vector2 curPos;
     LayerMask obstacleMask, unwalkableMask;
     List<Vector2> availableMovementList = new List<Vector2>();
@@ -28,6 +29,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         player = FindObjectOfType<Player>();
+        enemyXp = GetComponent<EnemyXp>();
         obstacleMask = LayerMask.GetMask("Wall", "Enemy", "Player");
         unwalkableMask = LayerMask.GetMask("Wall", "Enemy");
         curPos = transform.position;
@@ -233,6 +235,7 @@ public class Enemy : MonoBehaviour
     /// </summary>
     void Die()
     {
+        player.GainXp(enemyXp.MaxXp);
         DungeonManager.instance.RemoveEnemy(this);
         Destroy(gameObject);
     }

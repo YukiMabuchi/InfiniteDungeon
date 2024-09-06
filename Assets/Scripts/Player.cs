@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -12,27 +10,20 @@ public class Player : MonoBehaviour
 
     public static Player instance;
 
-    [SerializeField] int maxHealth = 12;
     [SerializeField] int power = 4;
     // [SerializeField] int stamina; // TODO
     [SerializeField] float speed;
-    [SerializeField] Slider healthBar;
-    [SerializeField] TextMeshProUGUI healthCount;
     LayerMask obstacleMask, enemyMask;
     Vector2 targetPos;
     Vector2 attackTargetPos;
     Transform GFX;
+    PlayerLevel playerLevel;
+    PlayerHealth playerHealth;
 
-    int currentHealth = 0;
     int currentPower = 0;
     string currentDirection = "down";
     float flipx;
     bool isMoving;
-
-    /// <summary>
-    /// HP回復用Playerの動きの回数。回復するたびに0にする。
-    /// </summary>
-    int countForHealth = 0;
 
     public int CurrentPower { get { return currentPower; } }
     public Vector2 TargetPos { get { return targetPos; } }
@@ -44,15 +35,13 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        currentHealth = maxHealth;
         currentPower = power;
-        healthBar.maxValue = currentHealth;
-        healthBar.value = currentHealth;
-        UpdateHealthCount();
         obstacleMask = LayerMask.GetMask("Wall", "Enemy");
         enemyMask = LayerMask.GetMask("Enemy");
         GFX = GetComponentInChildren<SpriteRenderer>().transform;
         flipx = GFX.localScale.x;
+        playerLevel = GetComponent<PlayerLevel>();
+        playerHealth = GetComponent<PlayerHealth>();
     }
 
     // 移動
@@ -88,7 +77,7 @@ public class Player : MonoBehaviour
         transform.position = posToMove;
 
         // HP回復
-        IncreaseHealthByPlayerMovement();
+        playerHealth.IncreaseHealthByPlayerMovement();
 
         isMoving = false;
     }
@@ -143,7 +132,7 @@ public class Player : MonoBehaviour
         if (GameManager.instance.CurrentGameState == GameState.Waiting)
         {
             // HP回復
-            IncreaseHealthByPlayerMovement();
+            playerHealth.IncreaseHealthByPlayerMovement();
 
             // 攻撃判定
             if (IsHit(currentDirection, enemyMask))
@@ -159,45 +148,16 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void GainXp(int xp)
+    {
+        playerLevel.AccumulateXpAndCheckLevelUp(xp);
+    }
+
     // ダメージ
     public void TakeDamage(int damageToTake)
     {
-        DecreaseHealth(damageToTake);
-        if (currentHealth <= 0) GameManager.instance.ShowGameOverPopup();
-    }
-
-    void IncreaseHealth(int amount)
-    {
-        currentHealth += amount;
-        if (currentHealth > maxHealth) currentHealth = maxHealth;
-        healthBar.value = currentHealth;
-        UpdateHealthCount();
-    }
-
-    void DecreaseHealth(int amount)
-    {
-        currentHealth -= amount;
-        if (currentHealth < 0) currentHealth = 0;
-        healthBar.value = currentHealth;
-        UpdateHealthCount();
-    }
-
-    void UpdateHealthCount()
-    {
-        healthCount.text = maxHealth + " / " + currentHealth;
-    }
-
-    /// <summary>
-    /// Playerの行動によりHPを回復する
-    /// </summary>
-    public void IncreaseHealthByPlayerMovement()
-    {
-        countForHealth++;
-        if (countForHealth == 2)
-        {
-            IncreaseHealth(1); // TODO: 体力回復の係数調整
-            countForHealth = 0;
-        }
+        playerHealth.DecreaseHealth(damageToTake);
+        if (playerHealth.CurrentHealth <= 0) GameManager.instance.ShowGameOverPopup();
     }
 
     // リスタート
