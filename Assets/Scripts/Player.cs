@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     [SerializeField] TextMeshProUGUI healthCount;
     LayerMask obstacleMask, enemyMask;
     Vector2 targetPos;
+    Vector2 attackTargetPos;
     Transform GFX;
 
     int currentHealth = 0;
@@ -65,22 +66,26 @@ public class Player : MonoBehaviour
             if (currentDirection == "left" || currentDirection == "right") GFX.localScale = new Vector2(flipx * GetDirection(currentDirection), GFX.localScale.y);
 
             // キャラの進行
-            if (!isMoving && !IsHit(currentDirection, obstacleMask)) StartCoroutine(SmoothMove());
+            if (!isMoving && !IsHit(currentDirection, obstacleMask))
+            {
+                targetPos = GenerateTargetPos(currentDirection); // NOTE: 代入必要
+                StartCoroutine(SmoothMove(targetPos));
+            }
             else return; // 壁などで移動できていない時GameStateを変更せずreturn
 
             GameManager.instance.SetCurrentState(GameState.PlayerTurn);
         }
     }
 
-    IEnumerator SmoothMove()
+    IEnumerator SmoothMove(Vector2 posToMove)
     {
         isMoving = true;
-        while (Vector2.Distance(transform.position, targetPos) > 0.01f)
+        while (Vector2.Distance(transform.position, posToMove) > 0.01f)
         {
-            transform.position = Vector2.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, posToMove, speed * Time.deltaTime);
             yield return null;
         }
-        transform.position = targetPos;
+        transform.position = posToMove;
 
         // HP回復
         IncreaseHealthByPlayerMovement();
@@ -88,26 +93,36 @@ public class Player : MonoBehaviour
         isMoving = false;
     }
 
-    /// <summary>
-    /// 指定方向で指定マスクに当たるかの判定
-    /// </summary>
-    bool IsHit(string direction, LayerMask targetMask)
+    Vector2 GenerateTargetPos(string direction)
     {
+        if (direction == "relocate") return new Vector2(0, 0);
+
+        Vector2 tempTargetPos = new Vector2(0, 0);
         int directionNum = GetDirection(direction);
 
         // 進行先の設定 (1マス先)
         if (direction == "left" || direction == "right")
         {
-            targetPos = new Vector2(transform.position.x + directionNum, transform.position.y);
+            tempTargetPos = new Vector2(transform.position.x + directionNum, transform.position.y);
         }
         else if (currentDirection == "up" || currentDirection == "down")
         {
-            targetPos = new Vector2(transform.position.x, transform.position.y + directionNum);
+            tempTargetPos = new Vector2(transform.position.x, transform.position.y + directionNum);
         }
+
+        return tempTargetPos;
+    }
+
+    /// <summary>
+    /// 指定方向で指定マスクに当たるかの判定
+    /// </summary>
+    bool IsHit(string direction, LayerMask targetMask)
+    {
+        Vector2 tempTargetPos = GenerateTargetPos(direction);
 
         // check for collisions
         Vector2 hitSize = Vector2.one * 0.8f;
-        return Physics2D.OverlapBox(targetPos, hitSize, 0, targetMask);
+        return Physics2D.OverlapBox(tempTargetPos, hitSize, 0, targetMask);
     }
 
     int GetDirection(string direction)
@@ -133,7 +148,8 @@ public class Player : MonoBehaviour
             // 攻撃判定
             if (IsHit(currentDirection, enemyMask))
             {
-                GameObject floor = DungeonManager.instance.GetFloorByPos(targetPos);
+                attackTargetPos = GenerateTargetPos(currentDirection); // NOTE: 代入必要
+                GameObject floor = DungeonManager.instance.GetFloorByPos(attackTargetPos);
                 if (floor == null) return;
 
                 Enemy enemy = floor.GetComponentInChildren<Enemy>();
@@ -187,7 +203,7 @@ public class Player : MonoBehaviour
     // リスタート
     public void RelocatePlayer()
     {
-        targetPos = new Vector2(0, 0);
+        targetPos = GenerateTargetPos("relocate");
         transform.position = targetPos;
     }
 }

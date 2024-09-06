@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -72,9 +73,18 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(turnDelay);
 
+        // すべてのコルーチンを開始し、それぞれのCoroutineを保持するリスト
+        List<Coroutine> coroutines = new List<Coroutine>();
+
         foreach (Enemy enemy in DungeonManager.instance.Enemies)
         {
-            StartCoroutine(enemy.Movement());
+            coroutines.Add(StartCoroutine(enemy.Movement()));
+        }
+
+        // 全てのコルーチンが終了するのを待つ
+        foreach (Coroutine coroutine in coroutines)
+        {
+            yield return coroutine;
         }
 
         SetCurrentState(GameState.Waiting);
