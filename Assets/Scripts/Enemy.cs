@@ -151,7 +151,6 @@ public class Enemy : MonoBehaviour
     {
         // TODO: パフォーマンス改善
         // TODO: 1体1マス以内に入ると他の敵が1マス以内に来ない
-        // TODO: 意図せず離れたマスから攻撃を受ける => 2体縦に並んだ時1対手前倒すと起こる、1体倒すと斜め攻撃もなった
         yield return new WaitForSeconds(GameManager.instance.TurnDelay);
 
         if (!isMoving)
@@ -162,23 +161,23 @@ public class Enemy : MonoBehaviour
             // 範囲外は放浪
             if (distToPlayer > alertRange)
             {
-                Debug.Log("範囲外放浪");
+                // Debug.Log("範囲外放浪");
                 Patrol();
             }
             else
             {
-                Debug.Log("範囲内 " + distToPlayer);
+                // Debug.Log("範囲内 " + distToPlayer);
 
                 // 攻撃
                 if (distToPlayer <= attackRange)
                 {
-                    Debug.Log("普通に攻撃");
+                    // Debug.Log("普通に攻撃");
                     Attack();
                 }
                 // 追いかける
                 else
                 {
-                    Debug.Log("追いかける");
+                    // Debug.Log("追いかける");
 
                     Vector2 targetPos = player.TargetPos;
                     Vector2 newPos = FindNextStep(transform.position, targetPos, distToPlayer);
@@ -187,7 +186,7 @@ public class Enemy : MonoBehaviour
                         // 移動先がPlayerと同じ場合その場で攻撃する
                         if (newPos == targetPos)
                         {
-                            Debug.Log("その場で攻撃");
+                            // Debug.Log("その場で攻撃");
                             Attack();
                         }
                         else
@@ -198,7 +197,7 @@ public class Enemy : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("動きなし");
+                        // Debug.Log("パトロール");
                         Patrol();
                     }
                 }
