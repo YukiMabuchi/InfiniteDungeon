@@ -55,7 +55,6 @@ public class PlayerLevel : MonoBehaviour
 
         currentXp = exceededXP;
         xpBar.value = currentXp;
-        Debug.Log("レベルアップ！次の経験値まで " + requiredXp + "残り " + currentXp);
 
         // TODO: 一回の経験値で連続的なレベルアップ
         int i = 0;
