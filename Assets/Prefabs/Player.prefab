@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 5419619612831708444}
   - component: {fileID: 8443598333484715775}
   - component: {fileID: 7152506571424122259}
+  - component: {fileID: 6766870274027090000}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -133,7 +134,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4891f88e9485f4b74bed74ca7ba667d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  power: 4
   speed: 8
 --- !u!61 &5419619612831708444
 BoxCollider2D:
@@ -208,6 +208,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76716c7c0ef06434886e11e12f8fe493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  xpBar: {fileID: 0}
+  levelCount: {fileID: 0}
+--- !u!114 &6766870274027090000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8041047976311623321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e67689a7867bd4608a70c429952aabff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxPower: 4
 --- !u!1 &8331954537898959564
 GameObject:
   m_ObjectHideFlags: 0
