@@ -10,7 +10,6 @@ public class Player : MonoBehaviour
 
     public static Player instance;
 
-    [SerializeField] int power = 4;
     // [SerializeField] int stamina; // TODO
     [SerializeField] float speed;
     LayerMask obstacleMask, enemyMask;
@@ -19,14 +18,13 @@ public class Player : MonoBehaviour
     Transform GFX;
     PlayerLevel playerLevel;
     PlayerHealth playerHealth;
+    PlayerPower playerPower;
 
-    int currentPower = 0;
     string currentDirection = "down";
     float flipx;
     bool isMoving;
     bool relocated;
 
-    public int CurrentPower { get { return currentPower; } }
     public Vector2 TargetPos { get { return targetPos; } }
 
     void Awake()
@@ -36,13 +34,13 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        currentPower = power;
         obstacleMask = LayerMask.GetMask("Wall", "Enemy");
         enemyMask = LayerMask.GetMask("Enemy");
         GFX = GetComponentInChildren<SpriteRenderer>().transform;
         flipx = GFX.localScale.x;
         playerLevel = GetComponent<PlayerLevel>();
         playerHealth = GetComponent<PlayerHealth>();
+        playerPower = GetComponent<PlayerPower>();
     }
 
     // 移動
@@ -153,7 +151,7 @@ public class Player : MonoBehaviour
                 if (floor == null) return;
 
                 Enemy enemy = floor.GetComponentInChildren<Enemy>();
-                if (enemy != null) enemy.TakeDamage(power);
+                if (enemy != null) enemy.TakeDamage(playerPower.CurrentPower);
             }
             GameManager.instance.SetCurrentState(GameState.PlayerTurn);
         }
