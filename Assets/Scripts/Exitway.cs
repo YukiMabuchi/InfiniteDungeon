@@ -13,7 +13,7 @@ public class Exitway : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             DungeonManager.instance.UpdateFloorCount();
             DungeonManager.instance.GenerateDungeon();
