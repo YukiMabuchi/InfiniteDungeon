@@ -308,7 +308,7 @@ public class DungeonManager : MonoBehaviour
         floorCount.text = currentFloorCount.ToString();
 
         // TODO: 3フロア上がるごとに経験値を増やす
-        if (currentFloorCount > 1 && currentFloorCount % 2 == 0)
+        if (currentFloorCount > 1 && currentFloorCount % 3 == 0)
         {
             foreach (GameObject enemy in randomEnemies)
             {
