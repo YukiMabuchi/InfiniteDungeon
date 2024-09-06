@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class Player : MonoBehaviour
     // [SerializeField] int stamina; // TODO
     [SerializeField] float speed;
     [SerializeField] Slider healthBar;
+    [SerializeField] TextMeshProUGUI healthCount;
     LayerMask obstacleMask, enemyMask;
     Vector2 targetPos;
     Transform GFX;
@@ -45,6 +47,7 @@ public class Player : MonoBehaviour
         currentPower = power;
         healthBar.maxValue = currentHealth;
         healthBar.value = currentHealth;
+        UpdateHealthCount();
         obstacleMask = LayerMask.GetMask("Wall", "Enemy");
         enemyMask = LayerMask.GetMask("Enemy");
         GFX = GetComponentInChildren<SpriteRenderer>().transform;
@@ -152,6 +155,7 @@ public class Player : MonoBehaviour
         currentHealth += amount;
         if (currentHealth > maxHealth) currentHealth = maxHealth;
         healthBar.value = currentHealth;
+        UpdateHealthCount();
     }
 
     void DecreaseHealth(int amount)
@@ -159,6 +163,12 @@ public class Player : MonoBehaviour
         currentHealth -= amount;
         if (currentHealth < 0) currentHealth = 0;
         healthBar.value = currentHealth;
+        UpdateHealthCount();
+    }
+
+    void UpdateHealthCount()
+    {
+        healthCount.text = maxHealth + " / " + currentHealth;
     }
 
     /// <summary>
