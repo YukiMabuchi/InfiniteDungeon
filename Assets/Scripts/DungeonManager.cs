@@ -28,10 +28,12 @@ public class DungeonManager : MonoBehaviour
     LayerMask floorMask;
     LayerMask wallMask;
     int currentFloorCount = 0;
+    List<Vector2> allEnemiesTargetPos = new List<Vector2>(); // 敵のtargetPosのリスト
 
     public List<Enemy> Enemies { get { return ememies; } }
     public GameObject FloorPrefab { get { return floorPrefab; } }
     public GameObject WallPrefab { get { return wallPrefab; } }
+    public List<Vector2> AllEnemiesTargetPos { get { return allEnemiesTargetPos; } }
 
     void Awake()
     {
@@ -319,5 +321,23 @@ public class DungeonManager : MonoBehaviour
             if (floor != null && Vector3.Equals(floor.transform.position, targetPos)) return floor;
         }
         return null;
+    }
+
+    /// <summary>
+    /// 全敵の次の移動先マスを保持する
+    /// </summary>
+    /// <param name="targetPos"></param>
+    public void SetAllEnemiesTargetPos(Vector2 targetPos)
+    {
+        allEnemiesTargetPos.Add(targetPos);
+    }
+
+    /// <summary>
+    /// 全敵の次の移動先マスをクリアする
+    /// </summary>
+    /// <param name="targetPos"></param>
+    public void ClearAllEnemiesTargetPos()
+    {
+        allEnemiesTargetPos.Clear();
     }
 }

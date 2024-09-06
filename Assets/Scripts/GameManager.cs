@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
         switch (state)
         {
             case GameState.Waiting:
+                DungeonManager.instance.ClearAllEnemiesTargetPos();
                 break;
 
             case GameState.PlayerTurn:

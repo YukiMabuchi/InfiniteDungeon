@@ -66,10 +66,7 @@ public class Enemy : MonoBehaviour
     {
         Vector2 hitSize = Vector2.one * .5f;
         Collider2D hit = Physics2D.OverlapBox(checkPoint, hitSize, 0, unwalkableMask);
-        if (!hit)
-        {
-            nodesList.Add(new Node(checkPoint, parent));
-        }
+        if (!hit) nodesList.Add(new Node(checkPoint, parent));
     }
 
     Vector2 FindNextStep(Vector2 startPos, Vector2 targetPos, float distanceToPlayer)
@@ -116,8 +113,10 @@ public class Enemy : MonoBehaviour
             {
                 if (myPos == nodesList[i].position)
                 {
-                    if (nodesList[i].parent == startPos)
+                    Vector2 reserved = DungeonManager.instance.AllEnemiesTargetPos.Find(targetPos => Vector2.Equals(targetPos, myPos));
+                    if (!Vector2.Equals(reserved, myPos) && nodesList[i].parent == startPos)
                     {
+                        DungeonManager.instance.SetAllEnemiesTargetPos(myPos);
                         return myPos; // 次のマス目
                     }
                     myPos = nodesList[i].parent;
@@ -151,7 +150,7 @@ public class Enemy : MonoBehaviour
     public IEnumerator Movement()
     {
         // TODO: パフォーマンス改善
-        // TODO: 敵が重なる
+        // TODO: 1体1マス以内に入ると他の敵が1マス以内に来ない
         // TODO: 意図せず離れたマスから攻撃を受ける
         yield return new WaitForSeconds(GameManager.instance.TurnDelay);
 
