@@ -13,4 +13,10 @@ public class EnemyPower : MonoBehaviour
     public float AttackRange { get { return attackRange; } }
     public float AttackSuccessPercentage { get { return attackSuccessPercentage; } }
     public int MaxPower { get { return maxPower; } }
+
+    public void AttackPlayer(Player player)
+    {
+        int roll = Random.Range(0, 100);
+        if (roll <= attackSuccessPercentage) player.TakeDamage(maxPower);
+    }
 }

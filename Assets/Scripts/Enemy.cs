@@ -173,7 +173,7 @@ public class Enemy : MonoBehaviour
                 if (distToPlayer <= enemyPower.AttackRange)
                 {
                     // Debug.Log("普通に攻撃");
-                    Attack();
+                    enemyPower.AttackPlayer(player);
                 }
                 // 追いかける
                 else
@@ -188,7 +188,7 @@ public class Enemy : MonoBehaviour
                         if (newPos == targetPos)
                         {
                             // Debug.Log("その場で攻撃");
-                            Attack();
+                            enemyPower.AttackPlayer(player);
                         }
                         else
                         {
@@ -204,12 +204,6 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
-    }
-
-    public void Attack()
-    {
-        int roll = UnityEngine.Random.Range(0, 100);
-        if (roll <= enemyPower.AttackSuccessPercentage) player.TakeDamage(enemyPower.MaxPower);
     }
 
     public void TakeDamage(int damageToTake)
