@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1093914168150235157}
   - component: {fileID: 8265046584104693470}
   - component: {fileID: -2905605348295363452}
+  - component: {fileID: 212633197486038411}
   m_Layer: 7
   m_Name: Goblin
   m_TagString: Untagged
@@ -145,9 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 10
-  power: 4
   alertRange: 8
-  attackRange: 1.1
   takeDamageRange: 1.1
 --- !u!114 &-2905605348295363452
 MonoBehaviour:
@@ -163,3 +162,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxXp: 4
   xpRamp: 2
+--- !u!114 &212633197486038411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5843895985886124414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 498d447aa5a274a928aa9f2c1452244c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxPower: 4
+  attackRange: 1.1

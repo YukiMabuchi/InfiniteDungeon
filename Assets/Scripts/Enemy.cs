@@ -10,27 +10,25 @@ public class Enemy : MonoBehaviour
     */
 
     [SerializeField] int health = 10;
-    [SerializeField] int power = 4;
     [SerializeField] float alertRange; // 追いかけるようになるレンジ
-    [Tooltip("1マスは1.1fが安全")]
-    [SerializeField] float attackRange = 1.1f;
     [Tooltip("1マスは1.1fが安全")]
     [SerializeField] float takeDamageRange = 1.1f;
 
     Player player;
     EnemyXp enemyXp;
+    EnemyPower enemyPower;
     Vector2 curPos;
     LayerMask obstacleMask, unwalkableMask;
     List<Vector2> availableMovementList = new List<Vector2>();
     List<Node> nodesList = new List<Node>();
     bool isMoving;
     int currentHealth = 0;
-    int attackPercentage = 70;
 
     void Start()
     {
         player = FindObjectOfType<Player>();
         enemyXp = GetComponent<EnemyXp>();
+        enemyPower = GetComponent<EnemyPower>();
         obstacleMask = LayerMask.GetMask("Wall", "Enemy", "Player");
         unwalkableMask = LayerMask.GetMask("Wall", "Enemy");
         curPos = transform.position;
@@ -172,7 +170,7 @@ public class Enemy : MonoBehaviour
                 // Debug.Log("範囲内 " + distToPlayer);
 
                 // 攻撃
-                if (distToPlayer <= attackRange)
+                if (distToPlayer <= enemyPower.AttackRange)
                 {
                     // Debug.Log("普通に攻撃");
                     Attack();
@@ -211,10 +209,7 @@ public class Enemy : MonoBehaviour
     public void Attack()
     {
         int roll = UnityEngine.Random.Range(0, 100);
-        if (roll <= attackPercentage)
-        {
-            player.TakeDamage(power);
-        }
+        if (roll <= enemyPower.AttackSuccessPercentage) player.TakeDamage(enemyPower.MaxPower);
     }
 
     public void TakeDamage(int damageToTake)
