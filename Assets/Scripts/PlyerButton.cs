@@ -4,6 +4,7 @@ public class PlyerButton : MonoBehaviour
 {
     public void PlayerAttack()
     {
-        Player.instance.Attack();
+        PlayerPower playerPower = Player.instance.GetComponent<PlayerPower>();
+        playerPower.Attack();
     }
 }

@@ -12,19 +12,18 @@ public class Player : MonoBehaviour
 
     // [SerializeField] int stamina; // TODO
     [SerializeField] float speed;
-    LayerMask obstacleMask, enemyMask;
+    LayerMask obstacleMask;
     Vector2 targetPos;
-    Vector2 attackTargetPos;
     Transform GFX;
     PlayerLevel playerLevel;
     PlayerHealth playerHealth;
-    PlayerPower playerPower;
 
     string currentDirection = "down";
     float flipx;
     bool isMoving;
 
     public Vector2 TargetPos { get { return targetPos; } }
+    public string CurrentDirection { get { return currentDirection; } }
 
     void Awake()
     {
@@ -34,12 +33,10 @@ public class Player : MonoBehaviour
     void Start()
     {
         obstacleMask = LayerMask.GetMask("Wall", "Enemy");
-        enemyMask = LayerMask.GetMask("Enemy");
         GFX = GetComponentInChildren<SpriteRenderer>().transform;
         flipx = GFX.localScale.x;
         playerLevel = GetComponent<PlayerLevel>();
         playerHealth = GetComponent<PlayerHealth>();
-        playerPower = GetComponent<PlayerPower>();
     }
 
     // 移動
@@ -90,7 +87,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    Vector2 GenerateTargetPos(string direction)
+    public Vector2 GenerateTargetPos(string direction)
     {
         if (direction == "relocate") return new Vector2(0, 0);
 
@@ -113,7 +110,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 指定方向で指定マスクに当たるかの判定
     /// </summary>
-    bool IsHit(string direction, LayerMask targetMask)
+    public bool IsHit(string direction, LayerMask targetMask)
     {
         Vector2 tempTargetPos = GenerateTargetPos(direction);
 
@@ -132,28 +129,6 @@ public class Player : MonoBehaviour
             {"left", -1},
         };
         return directions[direction];
-    }
-
-    // 攻撃
-    public void Attack()
-    {
-        if (GameManager.instance.CurrentGameState == GameState.Waiting)
-        {
-            // HP回復
-            playerHealth.IncreaseHealthByPlayerMovement();
-
-            // 攻撃判定
-            if (IsHit(currentDirection, enemyMask))
-            {
-                attackTargetPos = GenerateTargetPos(currentDirection); // NOTE: 代入必要
-                GameObject floor = DungeonManager.instance.GetFloorByPos(attackTargetPos);
-                if (floor == null) return;
-
-                Enemy enemy = floor.GetComponentInChildren<Enemy>();
-                if (enemy != null) enemy.TakeDamage(playerPower.CurrentPower);
-            }
-            GameManager.instance.SetCurrentState(GameState.PlayerTurn);
-        }
     }
 
     public void GainXp(int xp)
