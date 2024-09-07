@@ -88,8 +88,8 @@ public class Enemy : MonoBehaviour
         if (distanceToPlayer > alertRange)
         {
             _CheckSurroundingNodes();
-            if (nodesList.Count > 0) myPos = nodesList[UnityEngine.Random.Range(0, nodesList.Count)].position;
-            return myPos;
+            if (nodesList.Count > 0) return nodesList[UnityEngine.Random.Range(0, nodesList.Count)].position;
+            else return myPos;
         }
 
         // マス計算
