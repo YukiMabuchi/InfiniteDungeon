@@ -10,7 +10,7 @@ public class PlayerPower : MonoBehaviour
     Player player;
     PlayerHealth playerHealth;
     int currentPower = 0;
-    Vector2 attackTargetPos;
+    int attackSuccessPercentage = 90;
 
     public int CurrentPower { get { return currentPower; } }
 
@@ -41,14 +41,21 @@ public class PlayerPower : MonoBehaviour
             playerHealth.IncreaseHealthByPlayerMovement();
 
             // 攻撃判定
+            int roll = Random.Range(0, 100);
             if (player.IsHit(player.CurrentDirection, enemyMask))
             {
-                attackTargetPos = player.GenerateTargetPos(player.CurrentDirection); // NOTE: 代入必要
-                GameObject floor = DungeonManager.instance.GetFloorByPos(attackTargetPos);
-                if (floor == null) return;
+                if (roll <= attackSuccessPercentage)
+                {
+                    GameObject floor = DungeonManager.instance.GetFloorByPos(player.GenerateTargetPos(player.CurrentDirection));
+                    if (floor == null) return;
 
-                Enemy enemy = floor.GetComponentInChildren<Enemy>();
-                if (enemy != null) enemy.TakeDamage(currentPower);
+                    Enemy enemy = floor.GetComponentInChildren<Enemy>();
+                    if (enemy != null) enemy.TakeDamage(currentPower);
+                }
+                else
+                {
+                    // 攻撃が外れた
+                }
             }
             GameManager.instance.SetCurrentState(GameState.PlayerTurn);
         }
