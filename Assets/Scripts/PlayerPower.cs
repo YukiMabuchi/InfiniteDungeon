@@ -14,4 +14,14 @@ public class PlayerPower : MonoBehaviour
     {
         currentPower = maxPower;
     }
+
+    private void Update()
+    {
+        // テスト用
+        if (Application.isEditor && Input.GetKeyDown(KeyCode.B))
+        {
+            maxPower = 1000;
+            currentPower = maxPower;
+        }
+    }
 }
