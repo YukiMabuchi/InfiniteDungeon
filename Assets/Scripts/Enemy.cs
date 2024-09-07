@@ -155,7 +155,7 @@ public class Enemy : MonoBehaviour
         // TODO: 1体1マス以内に入ると他の敵が1マス以内に来ない
         yield return new WaitForSeconds(GameManager.instance.TurnDelay);
 
-        if (!isMoving)
+        if (!isMoving && GameManager.instance.CurrentGameState == GameState.EnemyTurn)
         {
             // プレイヤーとの距離を取得
             float distToPlayer = GetDistanceFromPlayer();
