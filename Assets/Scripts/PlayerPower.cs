@@ -33,7 +33,7 @@ public class PlayerPower : MonoBehaviour
     }
 
     // 攻撃
-    public void Attack()
+    public void AttackEnemy()
     {
         if (GameManager.instance.CurrentGameState == GameState.Waiting)
         {
