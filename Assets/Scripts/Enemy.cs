@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,7 +53,7 @@ public class Enemy : MonoBehaviour
         // 進行方向を進行可能なマスからランダムに1マス選ぶ
         if (availableMovementList.Count > 0)
         {
-            int randomIndex = Random.Range(0, availableMovementList.Count);
+            int randomIndex = UnityEngine.Random.Range(0, availableMovementList.Count);
             curPos += availableMovementList[randomIndex];
         }
 
@@ -89,7 +90,7 @@ public class Enemy : MonoBehaviour
         if (distanceToPlayer > alertRange)
         {
             _CheckSurroundingNodes();
-            if (nodesList.Count > 0) myPos = nodesList[Random.Range(0, nodesList.Count)].position;
+            if (nodesList.Count > 0) myPos = nodesList[UnityEngine.Random.Range(0, nodesList.Count)].position;
             return myPos;
         }
 
@@ -209,15 +210,10 @@ public class Enemy : MonoBehaviour
 
     public void Attack()
     {
-        int roll = Random.Range(0, 100);
+        int roll = UnityEngine.Random.Range(0, 100);
         if (roll <= attackPercentage)
         {
-            Debug.Log(name + " attacked and hit for " + power + " points of damage");
             player.TakeDamage(power);
-        }
-        else
-        {
-            Debug.Log(name + " attacked and missed");
         }
     }
 
@@ -260,6 +256,15 @@ public class Enemy : MonoBehaviour
 
     float GetDistanceFromPlayer()
     {
-        return Vector2.Distance(transform.position, player.transform.position);
+        // TODO: 処理が重い時などまだenemyのcoroutine途中でDestroyされるとnullになる
+        try
+        {
+            return Vector2.Distance(transform.position, player.transform.position);
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Enemy ERROR: " + e.Message);
+            return 0f;
+        }
     }
 }
