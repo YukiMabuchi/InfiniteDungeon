@@ -10,6 +10,8 @@ public class EnemyXp : MonoBehaviour
 
     public void IncreaseXp(int ramp)
     {
+        if (ramp <= 0) return;
+
         maxXp = maxXp * (ramp * xpRamp);
     }
 }
