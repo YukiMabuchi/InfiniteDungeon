@@ -27,8 +27,9 @@ public class DungeonManager : MonoBehaviour
     Vector3 doorPos;
     LayerMask floorMask;
     LayerMask wallMask;
-    int currentFloorCount = 0;
     List<Vector2> allEnemiesTargetPos = new List<Vector2>(); // 敵のtargetPosのリスト
+    int currentFloorCount = 0;
+    int xpIncerasedCount = 0;
 
     public List<Enemy> Enemies { get { return ememies; } }
     public GameObject FloorPrefab { get { return floorPrefab; } }
@@ -38,7 +39,6 @@ public class DungeonManager : MonoBehaviour
     void Awake()
     {
         if (instance == null) instance = this;
-        UpdateFloorCount();
     }
 
     void Start()
@@ -48,6 +48,7 @@ public class DungeonManager : MonoBehaviour
 
         GenerateDungeon();
     }
+
     void Update()
     {
         // テスト用
@@ -79,6 +80,7 @@ public class DungeonManager : MonoBehaviour
                 break;
         }
 
+        UpdateFloorCount();
         GameManager.instance.SetCurrentState(GameState.FloorChange);
     }
 
@@ -227,7 +229,6 @@ public class DungeonManager : MonoBehaviour
         // Exitの作成
         Exitway();
 
-        // アイテムの生成
         Vector2 hitSize = Vector2.one * .8f;
         for (int x = (int)minX - 2; x <= (int)maxX + 2; x++)
         {
@@ -249,6 +250,18 @@ public class DungeonManager : MonoBehaviour
                 }
             }
         }
+
+        // 経験値調整
+        // TODO: 3フロア上がるごとに経験値を増やす
+        if (currentFloorCount != 1)
+        {
+            if (currentFloorCount % 3 == 0) xpIncerasedCount++;
+            foreach (Enemy enemy in ememies)
+            {
+                EnemyXp enemyXp = enemy.GetComponent<EnemyXp>();
+                enemyXp.IncreaseXp(xpIncerasedCount);
+            }
+        }
     }
 
     void GenerateRandomEnemies(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)
@@ -262,7 +275,7 @@ public class DungeonManager : MonoBehaviour
                 int enemyIndex = Random.Range(0, randomEnemies.Length);
                 GameObject enemy = randomEnemies[enemyIndex];
                 GameObject goEnemy = Instantiate(enemy, hitFloor.transform.position, Quaternion.identity);
-                goEnemy.name = enemy.name;
+                goEnemy.name = enemy.name + "_" + (ememies.Count + 1);
                 goEnemy.transform.SetParent(hitFloor.transform);
                 ememies.Add(goEnemy.GetComponent<Enemy>());
             }
@@ -306,16 +319,6 @@ public class DungeonManager : MonoBehaviour
     {
         currentFloorCount += 1;
         floorCount.text = currentFloorCount.ToString();
-
-        // TODO: 3フロア上がるごとに経験値を増やす
-        if (currentFloorCount > 1 && currentFloorCount % 3 == 0)
-        {
-            foreach (GameObject enemy in randomEnemies)
-            {
-                EnemyXp enemyXp = enemy.GetComponent<EnemyXp>();
-                enemyXp.IncreaseXp();
-            }
-        }
     }
 
     public void SetFloors(GameObject floor)

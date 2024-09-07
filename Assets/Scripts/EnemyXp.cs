@@ -8,8 +8,8 @@ public class EnemyXp : MonoBehaviour
     [SerializeField] int xpRamp = 2;
     public int MaxXp { get { return maxXp; } }
 
-    public void IncreaseXp()
+    public void IncreaseXp(int ramp)
     {
-        maxXp *= xpRamp;
+        maxXp = maxXp * (ramp * xpRamp);
     }
 }
