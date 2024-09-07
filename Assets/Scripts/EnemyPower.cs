@@ -11,7 +11,6 @@ public class EnemyPower : MonoBehaviour
     int attackSuccessPercentage = 70;
 
     public float AttackRange { get { return attackRange; } }
-    public float AttackSuccessPercentage { get { return attackSuccessPercentage; } }
     public int MaxPower { get { return maxPower; } }
 
     public void AttackPlayer(Player player)
