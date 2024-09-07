@@ -243,15 +243,15 @@ public class DungeonManager : MonoBehaviour
                         Collider2D hitBottom = Physics2D.OverlapBox(new Vector2(x, y - 1), hitSize, 0, wallMask);
                         Collider2D hitLeft = Physics2D.OverlapBox(new Vector2(x - 1, y), hitSize, 0, wallMask);
 
-                        RandomItems(hitFloor, hitTop, hitRight, hitBottom, hitLeft);
-                        RandomEnemies(hitFloor, hitTop, hitRight, hitBottom, hitLeft);
+                        GenerateRandomItems(hitFloor, hitTop, hitRight, hitBottom, hitLeft);
+                        GenerateRandomEnemies(hitFloor, hitTop, hitRight, hitBottom, hitLeft);
                     }
                 }
             }
         }
     }
 
-    void RandomEnemies(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)
+    void GenerateRandomEnemies(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)
     {
         // TODO: 開始時Playerとスポーン地点が被ることがある
         if (!hitTop && !hitRight && !hitBottom && !hitLeft)
@@ -278,7 +278,7 @@ public class DungeonManager : MonoBehaviour
         ememies.Remove(enemyToRemove);
     }
 
-    void RandomItems(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)
+    void GenerateRandomItems(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)
     {
         if ((hitTop || hitRight || hitBottom || hitLeft) && !(hitTop && hitBottom) && !(hitRight && hitLeft))
         {
