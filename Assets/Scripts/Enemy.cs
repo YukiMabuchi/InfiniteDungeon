@@ -23,6 +23,7 @@ public class Enemy : MonoBehaviour
     List<Node> nodesList = new List<Node>();
     bool isMoving;
     int currentHealth = 0;
+    float moveSpeed = 15f;
 
     void Start()
     {
@@ -72,6 +73,8 @@ public class Enemy : MonoBehaviour
 
     Vector2 FindNextStep(Vector2 startPos, Vector2 targetPos, float distanceToPlayer)
     {
+        // TODO: 敵が重なる
+
         Vector2 myPos = startPos;
         nodesList.Clear();
 
@@ -132,7 +135,7 @@ public class Enemy : MonoBehaviour
         isMoving = true;
         while (GameManager.instance.CurrentGameState != GameState.FloorChange && Vector2.Distance(transform.position, curPos) > .01f)
         {
-            transform.position = Vector2.MoveTowards(transform.position, curPos, 5f * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, curPos, moveSpeed * Time.deltaTime);
             yield return null; // 1フレーム待つ
         }
         transform.position = curPos;

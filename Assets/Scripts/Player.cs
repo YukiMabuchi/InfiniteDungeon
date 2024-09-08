@@ -11,7 +11,6 @@ public class Player : MonoBehaviour
     public static Player instance;
 
     // [SerializeField] int stamina; // TODO
-    [SerializeField] float speed;
     LayerMask obstacleMask;
     Vector2 targetPos;
     Transform GFX;
@@ -21,6 +20,7 @@ public class Player : MonoBehaviour
     string currentDirection = "down";
     float flipx;
     bool isMoving;
+    float moveSpeed = 15;
 
     public Vector2 TargetPos { get { return targetPos; } }
     public string CurrentDirection { get { return currentDirection; } }
@@ -69,7 +69,7 @@ public class Player : MonoBehaviour
         // NOTE: フロア移動中などcoroutine残り続けるので、フラグをwhileの条件に追加する必要あり
         while (GameManager.instance.CurrentGameState != GameState.FloorChange && Vector2.Distance(transform.position, posToMove) > 0.01f)
         {
-            transform.position = Vector2.MoveTowards(transform.position, posToMove, speed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, posToMove, moveSpeed * Time.deltaTime);
             yield return null;
         }
 
