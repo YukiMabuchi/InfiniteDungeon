@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject gameOverPopup;
 
     GameState currentGameState; // 現在のゲーム状態
-    float turnDelay = .1f; // 移動ごとの間隔
+    float turnDelay = .2f; // 移動ごとの間隔
 
     bool isGamePaused = false;
 
